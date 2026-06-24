@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>镜头语言全图鉴</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans SC',sans-serif;background:#f5f5f8;color:#1a1a2e;min-height:100vh;overflow-x:hidden}
+
+  /* Header */
+  .header{text-align:center;padding:48px 20px 12px}
+  .header h1{font-size:40px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;margin-bottom:8px}
+  .header .subtitle{font-size:15px;color:#555;font-weight:300;letter-spacing:2px}
+
+  /* Layout */
+  .layout{display:flex;max-width:1440px;margin:0 auto}
+  .sidebar{width:240px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid #eee;padding:20px 0;background:#fafafa;font-size:13px}
+  .sidebar::-webkit-scrollbar{width:3px}
+  .sidebar::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+  .content{flex:1;min-width:0;padding-bottom:60px}
+
+  .sb-part{padding:16px 16px 4px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa}
+  .sb-link{display:block;padding:6px 16px 6px 28px;color:#888;text-decoration:none;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:12.5px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sb-link:hover{color:#333;background:rgba(0,0,0,.03)}
+  .sb-link.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(124,58,237,.04);font-weight:500}
+  .sb-sub{padding-left:40px;font-size:11.5px;color:#aaa}
+  .sb-sub:hover{color:#666}
+  .sb-sub.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(124,58,237,.04)}
+
+  /* Part header */
+  .part{padding:40px 20px 20px}
+  .part-header{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+  .part-num{font-size:13px;font-weight:700;color:#aaa;padding:3px 10px;border:1px solid #ddd;border-radius:4px;letter-spacing:1px}
+  .part-title{font-size:26px;font-weight:900;letter-spacing:2px}
+  .part-desc{font-size:13px;color:#555;margin-bottom:32px;padding-left:2px}
+
+  /* Section (category) */
+  .section{padding:0 20px 24px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;transition:background .2s}
+  .section-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .section-title{font-size:18px;font-weight:700;letter-spacing:1px}
+  .section-subtitle{font-size:12px;color:#555;font-weight:300;margin-left:6px}
+  .section-tag{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;margin-left:auto;white-space:nowrap}
+
+  /* Cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding:12px 0 20px}
+  .card{background:#fff;border:1px solid #eaeaf0;border-radius:12px;padding:18px;transition:all .3s;cursor:default;position:relative;overflow:hidden;display:flex;flex-direction:column}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;opacity:.8}
+  .card:hover{border-color:#d0d0da;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.06)}
+  .card-name{font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:2px}
+  .card-name-en{font-size:11px;color:#999;margin-bottom:8px}
+  .card-desc{font-size:12.5px;color:#666;line-height:1.7;margin-bottom:10px}
+  .card-example{font-size:12px;color:#666;line-height:1.6;padding:8px 10px;background:#f8f8fb;border-radius:6px;border-left:3px solid #e0e0e8;margin-bottom:10px}
+  .card-example strong{color:#888}
+  .card-extra{font-size:11px;line-height:1.6;padding:6px 9px;border-radius:5px;margin-bottom:6px}
+  .card-cognition{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.15);color:#7c6aaf}
+  .card-cognition::before{content:'🧠 ';font-size:12px}
+  .card-usage{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.15);color:#3a8ba8}
+  .card-usage::before{content:'🎬 ';font-size:12px}
+  .card-recipe{background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.15);color:#b0608a}
+  .card-recipe::before{content:'🧩 ';font-size:12px}
+
+  /* Upload */
+  .card-media{margin-bottom:10px}
+  .upload-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border:1px dashed #ccc;border-radius:6px;font-size:11px;color:#aaa;cursor:pointer;background:none}
+  .upload-btn:hover{border-color:#999;color:#666}
+  .upload-btn input[type=file]{display:none}
+  .video-gallery{display:flex;gap:10px;margin-top:8px;overflow-x:auto;padding-bottom:4px}
+  .video-gallery::-webkit-scrollbar{height:4px}
+  .video-gallery::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+  .video-thumb{position:relative;min-width:160px;width:160px;height:100px;border-radius:8px;overflow:hidden;cursor:pointer;border:1px solid #e8e8ee;transition:all .2s;flex-shrink:0;background:#f0f0f4}
+  .video-thumb:hover{border-color:#ccc;transform:scale(1.03)}
+  .video-thumb video{width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .video-thumb .play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:rgba(0,0,0,.5);border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .video-thumb .play-icon::after{content:'';width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent #fff;margin-left:2px}
+  .video-thumb .delete-btn{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(239,68,68,.85);border:none;border-radius:50%;color:#fff;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0}
+  .video-thumb:hover .delete-btn{display:flex}
+  .video-thumb .vid-label{position:absolute;bottom:0;left:0;right:0;font-size:9px;color:#ccc;background:rgba(0,0,0,.7);padding:1px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Tags */
+  .card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+  .tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500}
+  .tag-green{background:rgba(34,197,94,.1);color:#16a34a;border:1px solid rgba(34,197,94,.2)}
+  .tag-amber{background:rgba(245,158,11,.1);color:#d97706;border:1px solid rgba(245,158,11,.2)}
+  .tag-blue{background:rgba(96,165,250,.1);color:#2563eb;border:1px solid rgba(96,165,250,.2)}
+  .tag-gray{background:rgba(0,0,0,.03);color:#888;border:1px solid rgba(0,0,0,.06)}
+  .tag-purple{background:rgba(167,139,250,.1);color:#7c3aed;border:1px solid rgba(167,139,250,.2)}
+  .tag-pink{background:rgba(244,114,182,.1);color:#db2777;border:1px solid rgba(244,114,182,.2)}
+
+  /* Section color themes */
+  [data-color=green] .group-line{background:#22c55e}
+  [data-color=green] .section-icon{background:rgba(34,197,94,.1)}
+  [data-color=green] .section-title{color:#16a34a}
+  [data-color=green] .section-tag{background:rgba(34,197,94,.1);color:#16a34a;border:1px solid rgba(34,197,94,.2)}
+  [data-color=green] .card::before{background:#22c55e}
+
+  [data-color=teal] .section-icon{background:rgba(45,212,191,.1)}
+  [data-color=teal] .section-title{color:#0d9488}
+  [data-color=teal] .section-tag{background:rgba(45,212,191,.1);color:#0d9488;border:1px solid rgba(45,212,191,.2)}
+  [data-color=teal] .card::before{background:#2dd4bf}
+
+  [data-color=sky] .section-icon{background:rgba(56,189,248,.1)}
+  [data-color=sky] .section-title{color:#0284c7}
+  [data-color=sky] .section-tag{background:rgba(56,189,248,.1);color:#0284c7;border:1px solid rgba(56,189,248,.2)}
+  [data-color=sky] .card::before{background:#38bdf8}
+
+  [data-color=indigo] .section-icon{background:rgba(129,140,248,.1)}
+  [data-color=indigo] .section-title{color:#4f46e5}
+  [data-color=indigo] .section-tag{background:rgba(129,140,248,.1);color:#4f46e5;border:1px solid rgba(129,140,248,.2)}
+  [data-color=indigo] .card::before{background:#818cf8}
+
+  [data-color=purple] .section-icon{background:rgba(167,139,250,.1)}
+  [data-color=purple] .section-title{color:#7c3aed}
+  [data-color=purple] .section-tag{background:rgba(167,139,250,.1);color:#7c3aed;border:1px solid rgba(167,139,250,.2)}
+  [data-color=purple] .card::before{background:#a78bfa}
+
+  [data-color=orange] .section-icon{background:rgba(249,115,22,.1)}
+  [data-color=orange] .section-title{color:#ea580c}
+  [data-color=orange] .section-tag{background:rgba(249,115,22,.1);color:#ea580c;border:1px solid rgba(249,115,22,.2)}
+  [data-color=orange] .card::before{background:#f97316}
+
+  [data-color=amber] .section-icon{background:rgba(251,191,36,.1)}
+  [data-color=amber] .section-title{color:#d97706}
+  [data-color=amber] .section-tag{background:rgba(251,191,36,.1);color:#d97706;border:1px solid rgba(251,191,36,.2)}
+  [data-color=amber] .card::before{background:#f59e0b}
+
+  [data-color=rose] .section-icon{background:rgba(251,113,133,.1)}
+  [data-color=rose] .section-title{color:#e11d48}
+  [data-color=rose] .section-tag{background:rgba(251,113,133,.1);color:#e11d48;border:1px solid rgba(251,113,133,.2)}
+  [data-color=rose] .card::before{background:#fb7185}
+
+  [data-color=pink] .section-icon{background:rgba(244,114,182,.1)}
+  [data-color=pink] .section-title{color:#db2777}
+  [data-color=pink] .section-tag{background:rgba(244,114,182,.1);color:#db2777;border:1px solid rgba(244,114,182,.2)}
+  [data-color=pink] .card::before{background:#f472b6}
+
+  [data-color=fuchsia] .section-icon{background:rgba(192,132,252,.1)}
+  [data-color=fuchsia] .section-title{color:#9333ea}
+  [data-color=fuchsia] .section-tag{background:rgba(192,132,252,.1);color:#9333ea;border:1px solid rgba(192,132,252,.2)}
+  [data-color=fuchsia] .card::before{background:#c084fc}
+
+  /* Group headers within a section */
+  .group-header{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:14px 0 4px;margin-top:12px;border-top:1px solid #eee}
+  .group-line{width:4px;height:22px;border-radius:2px;flex-shrink:0}
+  .group-label{font-size:15px;font-weight:700;color:#333}
+  .group-sublabel{font-size:11px;color:#aaa;font-weight:400;margin-left:4px}
+  .parent-card{grid-column:1/-1;border:1.5px solid rgba(0,0,0,.08);background:linear-gradient(135deg,#fafafe,#f5f5ff);display:grid;grid-template-columns:1fr 1fr;gap:0 28px;padding:24px 28px}
+  .parent-card .card-name{font-size:20px;grid-column:1;margin-bottom:4px}
+  .parent-card .card-name-en{grid-column:1}
+  .parent-card .card-desc{grid-column:1}
+  .parent-card .card-example{grid-column:1}
+  .parent-card .card-extra{grid-column:2}
+  .parent-card .card-extra:first-of-type{margin-top:0}
+  .parent-card .card-media{grid-column:2}
+  .parent-card .card-tags{grid-column:1/-1}
+
+  /* Matrix */
+  .matrix-wrap{padding:0 20px 40px}
+  .matrix-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:20px;color:#1a1a2e}
+  .matrix{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+  .matrix th{padding:10px 8px;background:#f0f0f5;border:1px solid #e0e0e8;font-weight:600;color:#666;text-align:center}
+  .matrix td{padding:8px;border:1px solid #e0e0e8;text-align:center;color:#888;vertical-align:middle;line-height:1.5}
+  .matrix td.hi{background:rgba(124,58,237,.06);color:#7c3aed}
+  .matrix td.med{background:rgba(0,0,0,.02);color:#888}
+  .matrix td.lo{color:#bbb}
+  .matrix .row-label{background:#f5f5f8;font-weight:600;color:#666;text-align:left;padding-left:12px;width:100px}
+  .matrix-note{font-size:11px;color:#999;text-align:center;margin-top:10px}
+
+  /* Summary */
+  .summary{padding:20px 20px 60px}
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+  .summary-card{background:#fff;border:1px solid #eaeaf0;border-radius:10px;padding:20px;text-align:center}
+  .summary-number{font-size:32px;font-weight:900;margin-bottom:2px}
+  .summary-label{font-size:12px;color:#555}
+
+  /* Modal */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.88);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.active{display:flex}
+  .modal-content{position:relative;max-width:900px;width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee}
+  .modal-title{font-size:13px;font-weight:600;color:#333}
+  .modal-close{width:26px;height:26px;background:rgba(0,0,0,.05);border:none;border-radius:6px;color:#888;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .modal-close:hover{background:rgba(0,0,0,.1);color:#333}
+  .modal-body{padding:0;display:flex;align-items:center;justify-content:center;background:#000;position:relative}
+  .modal-body video{max-width:100%;max-height:70vh;outline:none}
+  .modal-play-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;background:rgba(0,0,0,.3);transition:opacity .2s}
+  .modal-play-overlay.hidden{opacity:0;pointer-events:none}
+  .modal-play-btn{width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:transform .15s,background .15s}
+  .modal-play-overlay:hover .modal-play-btn{transform:scale(1.1);background:rgba(255,255,255,.25)}
+  .modal-play-btn::after{content:'';width:0;height:0;border-style:solid;border-width:10px 0 10px 18px;border-color:transparent transparent transparent #fff;margin-left:3px}
+  .modal-footer{padding:8px 16px;border-top:1px solid #eee;font-size:11px;color:#888;display:flex;justify-content:space-between;align-items:center}
+  .modal-nav{display:flex;gap:6px}
+  .modal-nav button{padding:3px 10px;background:rgba(0,0,0,.04);border:1px solid #ddd;border-radius:4px;color:#888;font-size:11px;cursor:pointer}
+  .modal-nav button:hover{background:rgba(0,0,0,.08);color:#333}
+  .modal-nav button:disabled{opacity:.3;cursor:not-allowed}
+
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#333;padding:8px 20px;border-radius:8px;font-size:12px;z-index:2000;transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;border:1px solid #e0e0e8;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .footer{text-align:center;padding:30px 20px;border-top:1px solid #e8e8ee;color:#ccc;font-size:11px}
+
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .layout{display:block}
+  }
+  @media(max-width:640px){.header h1{font-size:26px}.cards{grid-template-columns:1fr}.matrix{font-size:10px}}
+</style>
+<script dataid="70"  data-x="aliincet"  src="https://g.alicdn.com/AWSC/et/1.83.8/et_f.js"></script><script dataid="80"  data-x="aliincet"  src="https://g.alicdn.com/network-security/dlh/2.1.1/index.js"></script></head>
+<body>
+
+<div class="header">
+  <h1>镜头语言全图鉴</h1>
+  <div class="subtitle">CINEMATIC LANGUAGE &mdash; COMPLETE REFERENCE</div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="content" id="app"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal-content">
+    <div class="modal-header"><span class="modal-title" id="modalTitle"></span><button class="modal-close" id="modalClose">&times;</button></div>
+    <div class="modal-body"><video id="modalVideo" controls></video><div class="modal-play-overlay" id="modalPlayOverlay"><div class="modal-play-btn"></div></div></div>
+    <div class="modal-footer"><span id="modalInfo"></span><div class="modal-nav"><button id="modalPrev">&larr;</button><button id="modalNext">&rarr;</button></div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const PARTS = [
+{
+  id:'part1', num:'PART 1', title:'单镜头语言', titleColor:'#4ade80',
+  desc:'一个连续不中断的镜头内部，摄影机如何表达 —— 从开机到关机之间的所有可能性',
+  sections:[
+    { color:'green', icon:'\u2794', title:'运镜 · 位移类', subtitle:'Camera Translation', tag:'摄影机整体移动',
+      cards:[
+        {id:'push-in',name:'推',en:'Dolly In / Push In',desc:'摄影机向被摄主体移动。引导注意力、强调细节、制造压迫感或亲密感。',example:'慢推到角色面部特写 — 暗示角色做出了某个重要决定',cognition:'模拟人靠近物体的视觉变化，激活注意力聚焦机制。大脑将"靠近"解读为"重要/需关注"',usage:'角色做关键决定、揭示重要信息、制造压迫感/亲密感',tags:['tag-green:拍摄','tag-gray:滑轨/稳定器','tag-gray:★ 入门']},
+        {id:'pull-out',name:'拉',en:'Dolly Out / Pull Out',desc:'摄影机远离被摄主体。揭示环境全貌、制造孤独/渺小感、从局部退回全局。',example:'从角色特写拉到远景 — 揭示角色独自站在空旷的荒野中',cognition:'模拟后退时的视觉，激活全局感知模式。远离=脱离，触发旁观者心态',usage:'段落结尾揭示全貌、表达角色孤独/渺小、从细节退回宏观',tags:['tag-green:拍摄','tag-gray:滑轨/稳定器','tag-gray:★ 入门']},
+        {id:'track',name:'横移',en:'Track / Truck',desc:'摄影机水平横向移动，与主体运动方向平行或垂直。展示空间关系、跟随角色行进。',example:'韦斯·安德森式的精确横移 — 像翻开一本立体书的不同页面',cognition:'模拟人平行走过场景，符合人眼水平扫视习惯，认知负担最低的运镜之一',usage:'跟随角色行进、平行展示多个元素、介绍空间全貌',tags:['tag-green:拍摄','tag-gray:滑轨/云台','tag-gray:★ 入门']},
+        {id:'crane',name:'升降',en:'Crane / Jib',desc:'摄影机大幅垂直移动。从低到高揭示宏大场景，从高到低贴近角色，增加视觉层次和仪式感。',example:'从地面升起揭示体育场全景 — 带来震撼的空间感',cognition:'垂直高度变化触发高度感知系统。上升=宏大/自由/超越，下降=贴近/压迫/聚焦',usage:'开场建立宏大场景、结尾收束升华、仪式感段落',tags:['tag-green:拍摄','tag-gray:摇臂/无人机','tag-gray:★★ 中级']},
+        {id:'orbit',name:'环绕',en:'Orbit',desc:'摄影机围绕主体旋转一圈或半圈。强化主体的中心地位，营造仪式感、戏剧性或角色展示。',example:'围绕拳手慢速旋转 — 展现备战状态和肌肉紧绷的细节',cognition:'360°信息采集激活空间建模系统。被环绕的对象自动获得"中心地位"的认知权重',usage:'角色出场/展示状态、双人对峙、营造史诗/仪式感',tags:['tag-green:拍摄','tag-gray:斯坦尼康/稳定器','tag-gray:★★ 中级']},
+        {id:'dolly-depth',name:'滑轨纵深',en:'Dolly / Slider',desc:'摄影机沿纵深方向前后移动，前景与背景产生分层视差效果。增强画面的三维纵深感。',example:'沿赛道滑轨跟拍 — 前景栏杆飞速掠过，背景选手分层移动',cognition:'前后景分层移动产生运动视差，强化双眼视差的深度感知，大脑自动构建更强的三维空间模型',usage:'追逐场景、展示纵深空间、增强沉浸感和立体感',tags:['tag-green:拍摄','tag-gray:滑轨','tag-gray:★★ 中级']},
+        {id:'fpv',name:'FPV/航拍',en:'FPV / Aerial',desc:'无人机第一视角或高空视角飞行穿越空间。提供人眼无法达到的视角，穿越障碍物，制造沉浸感。',example:'FPV穿越建筑群 — 从窗户飞入室内又从阳台飞出，一镜完成',cognition:'提供人类不可能获得的视角，激活空间探索的新奇感。第一人称飞行强烈触发前庭-视觉耦合',usage:'极限运动跟拍、场景穿越、建立宏大空间、沉浸式体验',tags:['tag-green:拍摄','tag-gray:无人机','tag-gray:★★★ 高级']},
+      ]
+    },
+    { color:'teal', icon:'\u21BB', title:'运镜 · 旋转类', subtitle:'Camera Rotation', tag:'摄影机原地转动',
+      cards:[
+        {id:'pan',name:'横摇',en:'Pan',desc:'摄影机原地水平旋转。扫视环境、跟随水平运动的主体、展示宽广的空间。',example:'从左到右横摇展示一整排等待的人群',cognition:'模拟人转头扫视，最符合日常视觉经验的运镜，认知负担极低',usage:'展示宽广空间、跟随水平运动、对话中的视线引导',tags:['tag-green:拍摄','tag-gray:三脚架/手持','tag-gray:★ 入门']},
+        {id:'tilt',name:'竖摇',en:'Tilt',desc:'摄影机原地垂直旋转。展示主体的高度（从头到脚）、揭示建筑的宏伟、引导视线上下移动。',example:'从角色的鞋子向上竖摇到面部 — 经典的角色出场方式',cognition:'模拟抬头/低头。从下到上激活"仰望"心态（崇敬），从上到下激活"审视"心态（掌控）',usage:'角色出场展示、建筑高度展示、纵向信息揭示',tags:['tag-green:拍摄','tag-gray:三脚架/手持','tag-gray:★ 入门']},
+        {id:'roll',name:'翻滚',en:'Roll',desc:'摄影机绕自身镜头轴旋转，地平线倾斜翻转。制造失重感、眩晕感或表达世界观的颠覆。',example:'《盗梦空间》走廊打斗 — 重力方向改变时画面翻滚',cognition:'地平线倾斜直接对抗前庭系统的重力参照。大脑依赖地平线水平来判断姿态，倾斜=失控/危险',usage:'表现失重/醉酒/眩晕、世界观颠覆、超自然/科幻场景',tags:['tag-green:拍摄','tag-gray:特殊装置','tag-gray:★★★ 高级']},
+        {id:'whip-pan-move',name:'甩镜头',en:'Whip Pan',desc:'极快速的横摇/竖摇，画面变成运动模糊。制造能量感和冲击力，也常用于转场（见交叉地带）。',example:'《爆裂鼓手》— 频繁甩镜制造打击乐般的视觉节奏',cognition:'极速运动超过视觉分辨率极限，触发运动模糊。高速=高能量，激活警觉系统',usage:'节奏打击点、能量爆发瞬间、快速视角切换、配合音乐重拍',tags:['tag-green:拍摄','tag-gray:手持','tag-gray:★★ 中级']},
+      ]
+    },
+    { color:'sky', icon:'\u25CE', title:'运镜 · 光学类', subtitle:'Lens Manipulation', tag:'摄影机不动，镜头变化',
+      cards:[
+        {id:'zoom',name:'变焦',en:'Zoom In / Out',desc:'转动变焦环改变焦距。画面放大/缩小但透视关系不变，空间被"压平"或"拉伸"。和推镜头视觉效果不同。',example:'70年代电影常见的快速变焦 — 突然拉近角色面部的震惊表情',cognition:'人眼没有变焦功能，画面放大但透视不变是非自然体验。大脑检测到"靠近了但空间没变"的轻微矛盾',usage:'快速拉近关注点、70年代复古风格、纪录片远距离捕捉、突然的情绪强调',tags:['tag-blue:光学','tag-gray:变焦镜头','tag-gray:★ 入门']},
+        {id:'dolly-zoom',name:'推拉变焦 / 希区柯克变焦',en:'Dolly Zoom / Vertigo Effect',desc:'摄影机移动和变焦反向同时进行。主体大小不变但背景空间剧烈扭曲，制造眩晕和不安感。希区柯克在《迷魂记》中首次大规模使用。',example:'《大白鲨》— 警长看到鲨鱼攻击时背景突然被压过来',cognition:'空间深度线索内部矛盾+前庭-视觉冲突+空间锚定系统警报。三重矛盾无法调和，触发"空间不稳定"的生存级不安',usage:'角色内心巨变（恐惧/顿悟/震惊）、恐高/幽闭的空间恐惧、现实崩塌感',tags:['tag-blue:光学','tag-gray:滑轨+变焦镜头','tag-gray:★★★ 高级']},
+        {id:'rack-focus',name:'拉焦',en:'Rack Focus',desc:'在一个镜头内改变焦点位置，从对焦A物体转到对焦B物体。引导注意力转移，揭示新信息。',example:'前景手中的戒指清晰 → 拉焦到背景中等待的恋人清晰',cognition:'完美复制人眼选择性注意：你注视A时B是模糊的，转看B时A变模糊。最接近真实视觉体验的技法',usage:'注意力引导、前景→背景信息揭示、两个对象之间的关系暗示',tags:['tag-blue:光学','tag-gray:大光圈镜头','tag-gray:★★ 中级']},
+      ]
+    },
+    { color:'indigo', icon:'\u23F1', title:'运镜 · 时间类', subtitle:'Time Manipulation', tag:'改变时间流速',
+      cards:[
+        {id:'speed-ramp-move',name:'速度坡度',en:'Speed Ramp',desc:'同一镜头内变速：正常→慢动作→正常，或反过来。强调关键动作瞬间，制造视觉节奏变化。',example:'起跳正常速度 → 空中慢动作 → 落地恢复正常',cognition:'慢动作延长关键瞬间，给大脑更多时间处理细节，增强记忆编码深度。快速则压缩信息，增加紧迫感',usage:'动作高潮瞬间（起跳/击打/爆炸）、节奏张弛变化、强调关键动作',tags:['tag-purple:拍摄+后期','tag-gray:高帧率拍摄','tag-gray:★★ 中级']},
+        {id:'timelapse-move',name:'延时摄影',en:'Timelapse',desc:'低帧率长时间拍摄，回放时时间极度压缩。展示缓慢变化过程（云、光影、花开、城市昼夜）。',example:'云卷云舒的城市天际线 — 将数小时压缩为几秒',cognition:'将超出人类时间感知范围的变化压缩到可感知范围。大脑获得"超人感知"，看到了平时看不到的时间模式',usage:'展示时间流逝、自然变化过程、城市昼夜交替、等待/过渡段落',tags:['tag-green:拍摄','tag-gray:三脚架+定时器','tag-gray:★★ 中级']},
+      ]
+    },
+    { color:'purple', icon:'\u270B', title:'稳定方式', subtitle:'Stabilization', tag:'决定运动质感',
+      cards:[
+        {id:'tripod',name:'三脚架',en:'Tripod',desc:'完全固定不动。客观、冷静、庄重。一切运动来自画面内部的主体，摄影机作为静默的旁观者。',example:'小津安二郎 — 低机位固定镜头，构图如画',cognition:'完全静止=安全/可预测，前额叶理性模式主导。观众以旁观者角色观察，情感距离较远',usage:'对话场景、静态叙事、庄重仪式化段落、纪录片采访',tags:['tag-gray:稳定','tag-gray:客观/冷静','tag-gray:★ 入门']},
+        {id:'slider-stab',name:'滑轨/云台',en:'Slider / Pan-Tilt Head',desc:'精确、平滑、可重复的机械运动。精致感和控制感，适合需要严格构图的风格化影像。',example:'韦斯·安德森 — 精确到毫米的对称横移',cognition:'精确可重复的运动轨迹给予大脑"可预测性"信号，降低警觉。精确=可控=安全感',usage:'产品展示、建筑/空间展示、风格化叙事、精确构图段落',tags:['tag-gray:精确','tag-gray:精致/控制感','tag-gray:★ 入门']},
+        {id:'steadicam',name:'斯坦尼康/稳定器',en:'Steadicam / Gimbal',desc:'流畅漂浮、无重力感的跟随运动。梦幻、从容、沉浸。像幽灵一样在空间中滑行。',example:'《闪灵》— 小男孩骑车穿过酒店走廊的跟拍',cognition:'流畅无颠簸不符合任何真实人类运动体验（走路会颠簸），创造"非人类视角"的漂浮感，产生超自然旁观者的沉浸体验',usage:'长镜头跟拍、角色跟随、梦境/超自然场景、沉浸式叙事',tags:['tag-gray:流畅','tag-gray:梦幻/从容','tag-gray:★★ 中级']},
+        {id:'handheld',name:'手持',en:'Handheld',desc:'明显的晃动和呼吸感。紧张、真实、纪实感。观众感觉自己在现场，而不是在看电影。',example:'《拯救大兵瑞恩》登陆诺曼底 — 手持晃动模拟士兵视角',cognition:'晃动精确复制"人站在现场"的视觉体验，激活镜像神经元的临场感。大脑判断"我在那里"',usage:'战争/动作场景、纪录片/伪纪录片、紧张追逐、情绪激烈段落',tags:['tag-gray:晃动','tag-gray:紧张/真实','tag-gray:★ 入门']},
+        {id:'shoulder',name:'肩扛',en:'Shoulder Rig',desc:'介于手持和稳定器之间。有临场感但不过分晃动，保持一定的稳定性和可控性。',example:'大量纪录片、新闻采访 — 兼顾机动性和稳定性',cognition:'适度晃动="在场但不慌张"的感知模式。比手持更可控，比稳定器更真实',usage:'新闻报道、纪录片、需要机动性但不需要极端晃动的场景',tags:['tag-gray:半稳定','tag-gray:临场/可控','tag-gray:★ 入门']},
+      ]
+    },
+  ]
+},
+{
+  id:'part2', num:'PART 2', title:'多镜头语言', titleColor:'#fbbf24',
+  desc:'多个镜头之间如何组织 —— 镜头A切到镜头B，为什么接（蒙太奇逻辑）和怎么接（转场技术）',
+  sections:[
+    { color:'orange', icon:'\u2726', title:'蒙太奇逻辑', subtitle:'Montage Logic — WHY', tag:'镜头排列的逻辑',
+      cards:[
+        {id:'mont-seq',name:'先后关系',en:'Sequential — 顺着讲',desc:'A发生完，B接着发生。按时间/因果顺序线性推进，最朴素的叙事方式。',example:'起床 → 刷牙 → 出门 → 上班',cognition:'最符合大脑因果认知模式。大脑天生将时间顺序理解为因果关系（A在B之前=A导致B）',usage:'主线叙事推进、动作序列、日常流程展示、教程/步骤说明',tags:['tag-amber:蒙太奇','tag-gray:连续蒙太奇','tag-gray:★ 入门']},
+        {id:'mont-sim',name:'同时关系',en:'Simultaneous — 切着讲',desc:'A和B同时在发生，来回切换。两条线会汇合（交叉）或各自独立（平行）。制造紧张感和悬念。',example:'炸弹倒计时 ↔ 主角狂奔拆弹 — 频率越来越快',cognition:'激活工作记忆——需同时保持多条时间线。切换频率越快，认知负荷越高，紧张感越强',usage:'紧张高潮段落、平行叙事对照、倒计时、多线汇合的戏剧高点',tags:['tag-amber:蒙太奇','tag-gray:交叉/平行蒙太奇','tag-gray:★★ 中级']},
+        {id:'mont-contrast',name:'对比关系',en:'Contrast — 反着讲',desc:'A和B形成鲜明反差，紧邻排列。用冲突制造情感冲击或讽刺效果，反差越大效果越强。',example:'富人的盛宴 | 穷人的残羹 — 贫富对比',cognition:'人类感知对"差异"天生敏感（进化中的变化检测机制）。相邻的反差会相互放大——知觉对比效应',usage:'社会批判、讽刺、贫富/美丑/动静对比、主题强化',tags:['tag-amber:蒙太奇','tag-gray:对比蒙太奇','tag-gray:★★ 中级']},
+        {id:'mont-similar',name:'相似关系',en:'Similarity — 比着讲',desc:'A和B表面不同但有某种相似性，放在一起让观众自己"悟"。含蓄的比喻，给观众解读空间。',example:'羊群涌出栅栏 → 工人涌出地铁 — 工人如羊群',cognition:'激活隐喻思维和类比推理。视觉相似性自动触发"A像B→A是B"的推理，产生多巴胺奖励',usage:'主题深化、哲学/社会表达、艺术片、开场或结尾的象征',tags:['tag-amber:蒙太奇','tag-gray:隐喻/杂耍蒙太奇','tag-gray:★★★ 高级']},
+        {id:'mont-repeat',name:'重复关系',en:'Repetition — 反复讲',desc:'同一画面/元素在影片中反复出现，每次出现都深化主题或递进情感。视觉上的"主题动机"。',example:'《辛德勒的名单》— 红衣小女孩反复出现，每次加深悲剧感知',cognition:'利用大脑的"启动效应"——每次重复出现，识别速度加快，情感响应加深。如音乐中的主题动机',usage:'主题强化与递进、角色标志/符号、前后呼应、情感层层累积',tags:['tag-amber:蒙太奇','tag-gray:重复蒙太奇','tag-gray:★★ 中级']},
+        {id:'mont-emotion',name:'情绪关系',en:'Emotional — 堆着讲',desc:'一连串画面没有叙事逻辑，但情绪一致，堆叠起来让你"感受到"而不是"理解到"。不按叙事逻辑，按情感逻辑组接。',example:'落日 + 空荡秋千 + 褪色照片 + 飘落树叶（配音乐）',cognition:'绕过理性分析，直接作用于边缘系统（情绪脑）。不需要叙事逻辑，只需要情感共振——类似音乐的作用原理',usage:'MV、抒情段落、回忆/梦境序列、片尾情感总结',tags:['tag-amber:蒙太奇','tag-gray:抒情/心理蒙太奇','tag-gray:★★★ 高级']},
+      ]
+    },
+    { color:'green', icon:'\u2702', title:'转场 · 无技巧', subtitle:'No-VFX Transitions', tag:'靠内容设计，无后期特效',
+      parent:{id:'hard-cut',name:'硬切',en:'Hard Cut',desc:'最基础的转场技术。A结束，B立刻开始，没有任何视觉过渡效果。下面所有无技巧转场都以硬切为底层技术，区别只在于叠加了什么蒙太奇逻辑。',example:'对话正反打 — 角色A说话 → 直接切到角色B回应',cognition:'注意力系统瞬间重置，大脑在约200ms内完成新画面识别和空间建模。认知负担最低的转场方式',usage:'所有类型的场景切换、对话正反打、最通用的基础技术',tags:['tag-green:无技巧','tag-gray:基础技术','tag-gray:★ 入门']},
+      groups:[
+        { label:'相似系 Match Cut', sublabel:'硬切 + 相似逻辑', cards:[
+          {id:'match-cut',name:'匹配剪辑（画面）',en:'Match Cut',desc:'A结尾与B开头在形状/颜色/构图上高度相似，利用视觉相似性跳转。Match Cut家族的核心手法。',example:'《2001太空漫游》— 骨头 → 太空飞船',cognition:'格式塔相似性原则自动将两个画面归组，100ms内完成。先感到"连续"后意识到"跳跃"，时间差产生智识愉悦',usage:'大时空跳跃、主题隐喻表达、艺术性开场/结尾',tags:['tag-green:无技巧','tag-gray:相似逻辑+硬切','tag-gray:★★★ 高级']},
+          {id:'action-cut',name:'动作匹配',en:'Action Cut',desc:'在动作中途切换镜头，利用动作连贯性掩盖剪辑。Match Cut在动作维度上的变体。',example:'A场景挥拳到一半 → 切到B场景拳头落下',cognition:'运动预测系统自动补全动作轨迹。切在速度最快处，运动模糊掩盖切点',usage:'打斗/动作场景、体育赛事、任何需要动作连贯的多角度剪辑',tags:['tag-green:无技巧','tag-gray:相似逻辑+硬切','tag-gray:★★ 中级']},
+          {id:'sound-match',name:'声音匹配',en:'Sound Match Cut',desc:'A末尾声音与B开头声音在音色/节奏上相似。Match Cut在听觉维度上的变体。',example:'闹钟铃声 → 切到学校上课铃声',cognition:'听觉模式匹配比视觉更快——声音桥接在视觉切换前就建立了认知连接',usage:'跨场景过渡、梦境↔现实切换、时空跳跃的听觉桥接',tags:['tag-green:无技巧','tag-gray:相似逻辑+声音','tag-gray:★★ 中级']},
+          {id:'closeup-bridge',name:'特写桥接',en:'Close-up Bridge',desc:'推到极致特写（失去空间参照）→ 切到相似特写拉开揭示新场景。Match Cut利用特写抹掉空间信息的变体。',example:'旋转的车轮特写 → 切到相似旋转的唱片特写 → 拉开是另一个房间',cognition:'特写删除周边视觉的空间参照信息，大脑无法定位"在哪"，切换时没有空间断裂感',usage:'跨场景物件衔接、微观→宏观切换、产品细节到使用场景',tags:['tag-green:无技巧','tag-gray:相似逻辑+推拉','tag-gray:★★ 中级']},
+        ]},
+        { label:'反差系 Smash Cut', sublabel:'硬切 + 对比逻辑', cards:[
+          {id:'smash-cut',name:'撞击切（调性反差）',en:'Smash Cut',desc:'在情绪/节奏完全不匹配的两个画面之间硬切。Smash Cut家族的核心手法，利用调性反差制造冲击。',example:'宁静的田园诗 → 硬切到战场轰鸣',cognition:'情绪/感知的突然中断激活杏仁核惊吓反应。预期被猛烈打破，肾上腺素释放',usage:'噩梦猛醒、恐怖片惊吓点、喜剧反转、情绪突变',tags:['tag-green:无技巧','tag-gray:对比逻辑+硬切','tag-gray:★★ 中级']},
+          {id:'extreme-cut',name:'两极镜头（景别反差）',en:'Extreme Shot Size Cut',desc:'大特写直接切到大远景，或反过来。Smash Cut在景别维度上的变体。',example:'角色瞳孔大特写 → 直接切到整个城市航拍远景',cognition:'景别极端跳跃强制大脑重建空间模型，视觉系统的尺度校准需要更长时间，产生认知冲击',usage:'戏剧性揭示、史诗感段落、角色vs环境的渺小/宏大对比',tags:['tag-green:无技巧','tag-gray:对比逻辑+硬切','tag-gray:★★ 中级']},
+          {id:'face-slap',name:'打脸转场（叙事矛盾）',en:'Contradiction Cut',desc:'角色说"绝不可能X" → 立刻切到X正在发生。Smash Cut在叙事维度上的变体。',example:'"我这辈子不会再喝酒了" → 切到角色烂醉在酒吧',cognition:'语义预期被直接打脸，激活幽默回路（惊讶+理解=笑）。叙事层面的预测误差奖励',usage:'喜剧反转、讽刺角色（说一套做一套）、建立角色不可靠性',tags:['tag-green:无技巧','tag-gray:对比逻辑+硬切','tag-gray:★ 入门']},
+          {id:'sound-contrast',name:'声音反差',en:'Sound Contrast Cut',desc:'极其嘈杂 → 死寂，或反过来。Smash Cut在听觉维度上的变体。',example:'战场爆炸枪声轰鸣 → 硬切到葬礼的一片寂静',cognition:'听觉动态范围的极端跳跃。从响到静时，安静被放大感知（感觉适应效应）；从静到响触发惊吓反射',usage:'战争→和平切换、悬念释放/爆发、情绪极端反差',tags:['tag-green:无技巧','tag-gray:对比逻辑+声音','tag-gray:★★ 中级']},
+        ]},
+        { label:'叙事系', sublabel:'硬切 + 叙事逻辑', cards:[
+          {id:'eyeline',name:'视线剪辑',en:'Eyeline Match',desc:'角色看向某方向 → 切到所看内容。用视线因果关系桥接两个镜头。',example:'角色抬头看 → 切到天空中的飞机',cognition:'人类天生追踪他人视线方向（联合注意力机制），婴儿6个月就会跟随视线。最本能的因果连接',usage:'角色POV展示、悬念揭示（角色看到了什么）、建立角色与环境的关系',tags:['tag-green:无技巧','tag-gray:叙事逻辑+硬切','tag-gray:★ 入门']},
+          {id:'logic-bridge',name:'逻辑转场',en:'Dialogue / Logic Bridge',desc:'台词或叙事逻辑直接"说出"下一场景，观众心理预期已建立，硬切因此毫不突兀。',example:'"我们去巴黎吧" → 硬切到埃菲尔铁塔',cognition:'语言系统提前建立场景预期，画面切换时大脑已"准备好了"，认知断裂感为零',usage:'台词引导的场景切换、"我们去..."类过渡、计划→执行的衔接',tags:['tag-green:无技巧','tag-gray:叙事逻辑+硬切','tag-gray:★ 入门']},
+          {id:'cue-trans',name:'叫板转场',en:'Cue Transition',desc:'角色的动作/道具直接"召唤"下一场景。比逻辑转场更主动——用具体动作触发切换。',example:'翻开相册 → 切到相册照片中的实际场景',cognition:'动作/道具作为认知锚点，大脑将其与目标场景建立因果关联。比纯语言更强的多感官预期',usage:'翻书/相册→进入场景、打开门→新空间、物件触发回忆/幻想',tags:['tag-green:无技巧','tag-gray:叙事动作+硬切','tag-gray:★★ 中级']},
+          {id:'cutaway',name:'空镜过渡',en:'Cutaway',desc:'在两个叙事场景之间插入环境空镜头做呼吸间隔。用情绪性画面缓冲叙事节奏。',example:'争吵 → 窗外的雨（空镜）→ 第二天清晨',cognition:'空镜的低信息量让工作记忆"清零"，为新场景留出认知空间。降低认知负荷，起情绪缓冲作用',usage:'场景间的节奏呼吸、时间流逝暗示、情绪过渡、纪录片B-roll',tags:['tag-green:无技巧','tag-gray:情绪逻辑+硬切','tag-gray:★ 入门']},
+        ]},
+        { label:'时空系', sublabel:'硬切 + 时空操作', cards:[
+          {id:'jump-cut',name:'跳切',en:'Jump Cut',desc:'同一机位同一主体，砍掉中间一段时间直接衔接。画面"跳"一下，暗示时间省略。',example:'戈达尔《筋疲力尽》— 车内对话连续跳切',cognition:'时间跳跃被注意力系统明确检测到，但因空间没变，大脑快速适应。制造时间碎片化感知',usage:'vlog时间压缩、角色独白/等待、戈达尔式风格化叙事',tags:['tag-green:无技巧','tag-gray:时间跳跃+硬切','tag-gray:★ 入门']},
+          {id:'in-out',name:'出画入画',en:'Exit & Enter Frame',desc:'角色走出画面（留下空画面）→ 切到角色从画面外走入新场景。空画面是天然切点。',example:'角色向右走出A画面 → B场景中从左侧走入',cognition:'空画面=视觉系统的"休息帧"，注意力自然释放。新角色进入时注意力重新捕获，完成无痛切换',usage:'场景自然切换、角色动线衔接、舞台感/戏剧感叙事',tags:['tag-green:无技巧','tag-gray:空间跳跃+硬切','tag-gray:★ 入门']},
+          {id:'blackout',name:'遮黑转场',en:'Natural Blackout',desc:'利用场景自带的黑暗（关灯、进隧道、闭眼）让画面自然变黑，黑暗中切换场景。',example:'角色关上车门 → 全黑 → 亮起时已是另一个场景',cognition:'黑暗触发暗适应机制，瞳孔放大准备接收新信息。自然黑暗=合理的信息暂停，不触发警觉',usage:'关门/关灯/闭眼后的场景切换、隧道过渡、睡眠→醒来',tags:['tag-green:无技巧','tag-gray:自然黑暗+硬切','tag-gray:★★ 中级']},
+          {id:'freeze',name:'定格转场',en:'Freeze Frame',desc:'A最后一帧定格，停顿后进入B场景。冻住时间，标记段落。',example:'《好家伙》— 角色定格+旁白介绍',cognition:'运动突然停止触发注意力锁定。冻结画面获得照片般的永恒感，增强记忆编码深度',usage:'段落结尾定格、角色介绍/出场定格、定义性瞬间、系列化叙事',tags:['tag-green:无技巧','tag-gray:时间冻结+硬切','tag-gray:★ 入门']},
+        ]},
+        { label:'隐形系', sublabel:'硬切 + 刻意隐藏', cards:[
+          {id:'invisible-cut',name:'无缝剪辑',en:'Invisible Cut',desc:'刻意隐藏剪辑点，让观众完全察觉不到切换。利用快速运动、暗部或遮挡物瞬间偷切。所有硬切变体的"终极形态"——做到让你看不出来。',example:'《1917》— 全片伪一镜到底',cognition:'剪辑点被完全隐藏，视觉连续性检测从未触发。注意力系统保持沉浸不被打断——最深层的沉浸态',usage:'伪一镜到底、沉浸式实时叙事、VR内容、需要绝对时间连续感的段落',tags:['tag-green:无技巧','tag-gray:隐藏剪辑点','tag-gray:★★★ 高级']},
+        ]},
+        { label:'音频桥接', sublabel:'画面硬切 + 声音做桥', cards:[
+          {id:'j-cut',name:'J-Cut 声音先行',en:'J-Cut',desc:'画面还在A，但B的声音已提前进入。声音引导观众心理预期，画面硬切到B时毫不突兀。',example:'收拾行李画面，已听到海浪声 → 切到海滩',cognition:'听觉系统比视觉系统更快建立场景预期。声音提前进入=大脑提前"到达"下一场景',usage:'片头/场景开头（用声音引入新场景）、梦境/回忆进入、悬念营造',tags:['tag-green:无技巧','tag-gray:声音先行+硬切','tag-gray:★★ 中级']},
+          {id:'l-cut',name:'L-Cut 声音延续',en:'L-Cut',desc:'画面已切到B，但A的声音仍在延续。在视觉切换后保持情感连接。',example:'演讲画面切到听众，但演讲声持续',cognition:'声音延续维持情感绑定。听觉记忆衰退比视觉慢，持续的声音让大脑保持对前场景的情感连接',usage:'对话反应镜头、演讲/表演的观众反应、片尾/场景结尾余韵延续',tags:['tag-green:无技巧','tag-gray:声音延续+硬切','tag-gray:★★ 中级']},
+        ]},
+      ]
+    },
+    { color:'amber', icon:'\u2728', title:'转场 · 有技巧', subtitle:'VFX Transitions', tag:'依赖后期视觉/音频效果',
+      groups:[
+        { label:'光学混合', sublabel:'画面渐变/融合', cards:[
+        {id:'dissolve',name:'叠化',en:'Cross Dissolve',desc:'AB画面叠加渐变。暗示时间流逝或情感过渡。',example:'年轻的脸叠化为苍老的脸',cognition:'视觉皮层处理两幅画面的渐变融合，产生"时间在流动"的感知。渐变速率控制情绪节奏',usage:'时间流逝暗示、回忆/梦境进入、情感柔和过渡、段落间的呼吸',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★ 入门']},
+        {id:'fade',name:'淡入淡出',en:'Fade In/Out',desc:'画面渐黑或从黑中显现。标记段落起止。过白暗示死亡/升华。',example:'章节结束 → 渐黑 → 渐亮进入新章节',cognition:'渐黑模拟闭眼/意识消退，渐亮模拟睁眼/意识恢复。过白触发强光眩目的视觉反应，暗示超越性体验',usage:'章节分隔、大段落起止、片头从黑场开始、片尾渐黑结束',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★ 入门']},
+        {id:'morph',name:'形变切',en:'Morph Cut',desc:'AI将A融变为B，面部平滑过渡。用于采访/口播消除跳切。',example:'采访剪掉口误，Morph Cut让表情自然衔接',cognition:'利用大脑对面部连续性的高度敏感——面部识别系统要求表情变化是连续的，Morph Cut满足了这个需求',usage:'采访/口播剪辑消除跳切、人物面部表情的平滑过渡',tags:['tag-amber:有技巧','tag-gray:AI后期','tag-gray:★ 入门']},
+        {id:'color-trans',name:'色彩过渡',en:'Color Transition',desc:'通过调色实现过渡。A逐渐变单色 → 切B → 还原。',example:'画面去饱和变黑白 → 回忆场景 → 恢复彩色',cognition:'色彩变化激活色觉系统的适应机制。去饱和=情感抽离/记忆质感；变色=情绪色彩暗示（蓝=冷，红=危险）',usage:'现实↔回忆切换（彩色↔黑白）、情绪色调变化、时空转换标记',tags:['tag-amber:有技巧','tag-gray:调色','tag-gray:★★ 中级']},
+        {id:'defocus',name:'虚焦过渡',en:'Defocus Transition',desc:'A逐渐失焦变模糊，全虚时切到B再对焦清晰。',example:'角色晕倒画面虚焦 → 医院场景逐渐对焦',cognition:'失焦模拟意识模糊/眼睛失去聚焦的真实体验。大脑将模糊自动关联为意识状态变化（晕倒/醉酒/做梦）',usage:'意识模糊/晕倒/醒来、梦境进出、醉酒/药物状态、主观感知变化',tags:['tag-amber:有技巧','tag-gray:拍摄/后期','tag-gray:★ 入门']},
+        ]},
+        { label:'视觉特效', sublabel:'后期添加视觉元素', cards:[
+        {id:'flash',name:'闪光/白闪',en:'Flash',desc:'切点处插入数帧纯白，模拟闪光灯或记忆闪回。',example:'闪光弹爆炸 → 白闪 → 新场景',cognition:'强光触发瞳孔收缩反射和视觉暂留。白闪后的新画面在视觉适应过程中出现，产生"被闪到"的真实感',usage:'爆炸/闪光灯瞬间、记忆闪回、照片拍摄瞬间、时空跳跃的冲击标记',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★ 入门']},
+        {id:'light-leak',name:'漏光',en:'Light Leak',desc:'叠加暖色光斑，营造复古梦幻氛围。',example:'婚礼视频中的暖色光斑过渡',cognition:'暖色光斑模拟胶片/阳光的光学瑕疵，激活"温暖/怀旧"的情感联想。暖色调激活积极情绪回路',usage:'婚礼/爱情视频、复古风MV、温暖回忆段落、柔和的场景过渡',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★ 入门']},
+        {id:'glitch',name:'故障风',en:'Glitch',desc:'模拟数字信号故障（RGB错位、花屏），科技感/不安感。',example:'科幻片中的信号干扰转场',cognition:'视觉系统将画面撕裂/错位识别为"信号异常"，触发轻微的威胁检测。不确定性=不安感',usage:'科幻/赛博朋克风格、电子音乐MV、数字世界/黑客主题、不安/混乱氛围',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★★ 中级']},
+        {id:'wipe',name:'划像',en:'Wipe',desc:'一条线从画面一侧扫过，揭示新场景。',example:'《星球大战》的标志性划变',cognition:'注意力系统跟随划线的移动方向，有序地从A场景过渡到B场景。有方向性的过渡比突然切换更温和',usage:'风格化的场景切换（星战系列）、分屏效果、漫画感/绘本感叙事',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★ 入门']},
+        {id:'iris',name:'圈入圈出',en:'Iris In/Out',desc:'画面从中心圆形扩展或收缩。复古致敬或喜剧效果。',example:'《乐一通》结尾"That\'s all folks!"',cognition:'圆形收缩将注意力强制聚焦到中心点，模拟"管状视觉"（隧道视野）。扩展则模拟"视野打开"',usage:'致敬默片/早期动画、喜剧结尾、聚焦特定细节后展开',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★ 入门']},
+        {id:'title-card',name:'文字/图形卡',en:'Title Card',desc:'用全屏文字卡隔开两个场景。标记章节/时间/地点。',example:'《杀死比尔》的章节标题卡',cognition:'文字激活语言处理系统（左脑），从影像的感性模式切换到语言的理性模式。产生明确的"段落感"',usage:'章节分隔、时间/地点标注、角色介绍、风格化叙事结构',tags:['tag-amber:有技巧','tag-gray:后期','tag-gray:★ 入门']},
+        ]},
+      ]
+    },
+  ]
+},
+{
+  id:'part3', num:'PART 3', title:'交叉地带', titleColor:'#c084fc',
+  desc:'拍摄替代剪辑 —— 用运镜手法在单镜头内完成场景切换，让剪辑"消失"',
+  sections:[
+    { color:'fuchsia', icon:'\u21C4', title:'运镜转场', subtitle:'Movement as Transition', tag:'拍摄兼职做剪辑',
+      cards:[
+        {id:'whip-trans',name:'甩镜头转场',en:'Whip Pan Transition',desc:'快速甩产生运动模糊 → 模糊瞬间切换场景 → 下一场也从甩镜减速开始。观众以为是同一次甩动。',example:'《爆裂鼓手》— 甩镜频率制造打击乐节奏',cognition:'运动模糊超过视觉分辨率时，大脑放弃追踪内容，形成自然的认知"盲区"。利用盲区偷切',usage:'能量感场景快切、喜剧快节奏、同一空间内的快速视角切换、配合音乐节拍',tags:['tag-purple:交叉','tag-gray:运镜+剪辑','tag-gray:★★ 中级']},
+        {id:'zoom-trans',name:'推拉转场',en:'Zoom Push/Pull Transition',desc:'快速推近至模糊/全黑 → 切到下一场从模糊中拉出。利用虚焦掩盖切点。',example:'推入瞳孔 → 从瞳孔中拉出进入回忆场景',cognition:'推到极近处空间参照信息完全丢失，大脑无法判断"在哪"，此时切换不产生空间断裂感',usage:'进入回忆/幻想、微观↔宏观切换、悬念段落的纵深穿越',tags:['tag-purple:交叉','tag-gray:运镜/变焦','tag-gray:★★ 中级']},
+        {id:'spin-trans',name:'旋转转场',en:'Spin Transition',desc:'画面以旋转方式过渡。可实拍环绕加速，也可后期添加旋转。',example:'航拍俯视旋转加速 → 模糊后切入下一场景',cognition:'旋转运动触发前庭系统响应，注意力被运动本身占据，无暇处理内容变化',usage:'时空穿越段落、航拍过渡、能量感/魔法/超能力场景',tags:['tag-purple:交叉','tag-gray:运镜/后期','tag-gray:★★ 中级']},
+        {id:'obj-block',name:'物体遮挡转场',en:'Object Wipe',desc:'物体经过镜头前完全遮住画面 → 遮黑瞬间切换场景。',example:'巴士驶过镜头前 → 遮黑瞬间切到另一个街道',cognition:'遮挡物经过时视觉信息降到零（类似眨眼），大脑进入"间歇抑制"状态。切点藏在间歇中',usage:'街景/人群中的自然场景切换、运动场景中的视角变化',tags:['tag-purple:交叉','tag-gray:走位设计+剪辑','tag-gray:★★ 中级']},
+        {id:'body-block',name:'人物穿越转场',en:'Body Wipe',desc:'角色走向镜头，身体填满画面 → 切到下一场景另一人走过。',example:'角色走近，衣服填满画面 → 切到新场景',cognition:'人物身体填满画面触发近距离社交反应（面对面=高关注度），分散了对切点的注意力',usage:'角色动线衔接、舞蹈/打斗场景、时空跳跃的自然桥接',tags:['tag-purple:交叉','tag-gray:走位设计+剪辑','tag-gray:★★ 中级']},
+        {id:'fg-pass',name:'前景穿越转场',en:'Foreground Pass-through',desc:'镜头穿过前景物体（门框/窗户/树丛），穿过瞬间切到另一空间。',example:'穿过门框 → 实际切到另一个房间布景',cognition:'穿过门框利用"边界跨越"认知——人类将穿过入口自动理解为"进入新空间"，场景切换被合理化',usage:'建筑内场景切换、一镜到底风格、空间连贯的假象营造',tags:['tag-purple:交叉','tag-gray:精密拍摄设计','tag-gray:★★★ 高级']},
+        {id:'oner',name:'一镜到底',en:'Long Take / Oner',desc:'完全不剪辑，用运镜+走位+调度替代所有剪辑工作。技术难度最高，沉浸感最强。',example:'《鸟人》— 全片伪装成一个连续镜头',cognition:'完全没有剪辑点=视觉连续性检测从未触发。时间和空间的绝对连续让大脑进入最深层沉浸态，接近亲身体验',usage:'沉浸式实时叙事、紧张段落的不间断体验、技术炫技、VR内容',tags:['tag-purple:交叉','tag-gray:运镜替代剪辑','tag-gray:★★★ 高级']},
+      ]
+    },
+  ]
+}
+];
+
+// ============================================================
+// IndexedDB
+// ============================================================
+const DB_NAME='CinematicVideos',DB_VER=1,STORE='videos';
+let db=null;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains(STORE)){const s=d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});s.createIndex('cardId','cardId',{unique:false})}};r.onsuccess=e=>{db=e.target.result;res(db)};r.onerror=e=>rej(e)})}
+function dbAdd(cid,f){return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');const r=tx.objectStore(STORE).add({cardId:cid,name:f.name,type:f.type,size:f.size,blob:f,ts:Date.now()});r.onsuccess=()=>res(r.result);r.onerror=e=>rej(e)})}
+function dbGetByCard(cid){return new Promise((res,rej)=>{const r=db.transaction(STORE,'readonly').objectStore(STORE).index('cardId').getAll(cid);r.onsuccess=()=>res(r.result);r.onerror=e=>rej(e)})}
+function dbDelete(id){return new Promise((res,rej)=>{const r=db.transaction(STORE,'readwrite').objectStore(STORE).delete(id);r.onsuccess=()=>res();r.onerror=e=>rej(e)})}
+
+// ============================================================
+// Helpers
+// ============================================================
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000)}
+function fmtSize(b){return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB'}
+
+// ============================================================
+// Render
+// ============================================================
+function countSectionCards(sec){let n=0;if(sec.cards)n=sec.cards.length;if(sec.parent)n++;if(sec.groups)sec.groups.forEach(g=>n+=g.cards.length);return n}
+function render(){
+  const app=document.getElementById('app');
+  const sidebar=document.getElementById('sidebar');
+  app.innerHTML='';
+  sidebar.innerHTML='';
+  let totalCards=0;
+  let secIndex=0;
+  let sidebarHtml='';
+
+  PARTS.forEach(part=>{
+    const partEl=document.createElement('div');
+    partEl.id=part.id;
+    partEl.innerHTML=`<div class="part"><div class="part-header"><span class="part-num">${part.num}</span><span class="part-title" style="color:${part.titleColor}">${part.title}</span></div><div class="part-desc">${part.desc}</div></div>`;
+    app.appendChild(partEl);
+
+    sidebarHtml+=`<div class="sb-part">${part.num} ${part.title}</div>`;
+
+    part.sections.forEach(sec=>{
+      const sid='sec-'+secIndex;
+      secIndex++;
+      const secEl=document.createElement('div');
+      secEl.className='section';
+      secEl.id=sid;
+      secEl.setAttribute('data-color',sec.color);
+      secEl.innerHTML=`<div class="section-header"><div class="section-icon">${sec.icon}</div><div><span class="section-title">${sec.title}</span><span class="section-subtitle">${sec.subtitle}</span></div><span class="section-tag">${sec.tag}</span></div><div class="cards"></div>`;
+      app.appendChild(secEl);
+      const cardsEl=secEl.querySelector('.cards');
+
+      sidebarHtml+=`<a class="sb-link" data-target="${sid}" onclick="document.getElementById('${sid}').scrollIntoView({behavior:'smooth',block:'start'})">${sec.title}</a>`;
+
+      function addCard(c,isParent){
+        totalCards++;
+        const card=document.createElement('div');
+        card.className='card'+(isParent?' parent-card':'');
+        const tagsHtml=c.tags.map(t=>{const[cls,label]=t.split(':');return`<span class="tag ${cls}">${label}</span>`}).join('');
+        card.innerHTML=`<div class="card-name">${c.en}</div><div class="card-name-en">${c.name}</div><div class="card-desc">${c.desc}</div><div class="card-example"><strong>案例：</strong>${c.example}</div>${c.cognition?`<div class="card-extra card-cognition">${c.cognition}</div>`:''}${c.usage?`<div class="card-extra card-usage">${c.usage}</div>`:''}<div class="card-media"><label class="upload-btn"><input type="file" accept="video/*" multiple>+ 上传视频</label><div class="video-gallery" id="gallery-${c.id}"></div></div><div class="card-tags">${tagsHtml}</div>`;
+        cardsEl.appendChild(card);
+        const mediaEl=card.querySelector('.card-media'),fi=mediaEl.querySelector('input');
+        mediaEl.addEventListener('dragover',e=>{e.preventDefault()});
+        mediaEl.addEventListener('drop',e=>{e.preventDefault();handleFiles(c.id,e.dataTransfer.files)});
+        fi.addEventListener('change',e=>{handleFiles(c.id,e.target.files);e.target.value=''});
+      }
+
+      if(sec.groups){
+        if(sec.parent) addCard(sec.parent,true);
+        sec.groups.forEach((g,gi)=>{
+          const gid=sid+'-g'+gi;
+          const gh=document.createElement('div');
+          gh.className='group-header';
+          gh.id=gid;
+          gh.innerHTML=`<div class="group-line" style="background:var(--gc,#555)"></div><span class="group-label">${g.label}</span><span class="group-sublabel">${g.sublabel}</span>`;
+          cardsEl.appendChild(gh);
+          sidebarHtml+=`<a class="sb-link sb-sub" data-target="${gid}" onclick="document.getElementById('${gid}').scrollIntoView({behavior:'smooth',block:'start'})">${g.label}</a>`;
+          g.cards.forEach(c=>addCard(c,false));
+        });
+      } else if(sec.cards){
+        sec.cards.forEach(c=>addCard(c,false));
+      }
+    });
+  });
+
+  // Matrix
+  const matrixId='sec-'+secIndex;
+  secIndex++;
+  const matrixHtml=`
+  <div class="matrix-wrap" id="${matrixId}">
+    <div class="part" style="padding-bottom:8px"><div class="part-header"><span class="part-num">PART 4</span><span class="part-title" style="color:#1a1a2e">组合关系</span></div><div class="part-desc">蒙太奇逻辑 × 转场技术 的天然搭配 —— 紫色=经典组合，灰色=偶尔使用，空=罕见</div></div>
+    <div class="matrix-title">蒙太奇 × 转场 配对矩阵</div>
+    <div style="overflow-x:auto">
+    <table class="matrix">
+      <tr><th></th><th>硬切</th><th>叠化</th><th>淡入淡出</th><th>甩镜</th><th>J/L-Cut</th><th>遮挡</th><th>闪光</th></tr>
+      <tr><td class="row-label">先后关系</td><td class="hi">Action Cut<br>视线剪辑</td><td class="med">时间流逝</td><td class="lo">章节</td><td class="med">能量衔接</td><td class="hi">声音桥接</td><td class="med">空间穿越</td><td class="lo">—</td></tr>
+      <tr><td class="row-label">同时关系</td><td class="hi">交叉剪辑<br>频率递增</td><td class="lo">—</td><td class="lo">—</td><td class="med">快速切换</td><td class="hi">声音交织</td><td class="lo">—</td><td class="lo">—</td></tr>
+      <tr><td class="row-label">对比关系</td><td class="hi">Smash Cut<br>反差最大化</td><td class="med">含蓄对比</td><td class="lo">—</td><td class="med">动感反差</td><td class="lo">—</td><td class="lo">—</td><td class="med">冲击强调</td></tr>
+      <tr><td class="row-label">相似关系</td><td class="hi">Match Cut<br>形状/动作匹配</td><td class="hi">隐喻叠化<br>意象融合</td><td class="lo">—</td><td class="lo">—</td><td class="med">声音匹配</td><td class="lo">—</td><td class="lo">—</td></tr>
+      <tr><td class="row-label">重复关系</td><td class="hi">重复硬切<br>主题强化</td><td class="med">重复叠化</td><td class="lo">—</td><td class="lo">—</td><td class="lo">—</td><td class="lo">—</td><td class="med">闪回强调</td></tr>
+      <tr><td class="row-label">情绪关系</td><td class="med">Cutaway</td><td class="hi">抒情叠化<br>情绪流动</td><td class="hi">段落呼吸<br>情感沉淀</td><td class="lo">—</td><td class="hi">音乐桥接<br>情绪延续</td><td class="lo">—</td><td class="lo">—</td></tr>
+    </table>
+    </div>
+    <div class="matrix-note">紫色 = 经典组合（有专属名字） ｜ 灰色 = 可以使用 ｜ — = 罕见搭配</div>
+  </div>`;
+  app.insertAdjacentHTML('beforeend',matrixHtml);
+
+  sidebarHtml+=`<div class="sb-part">PART 4 组合关系</div>`;
+  sidebarHtml+=`<a class="sb-link" data-target="${matrixId}" onclick="document.getElementById('${matrixId}').scrollIntoView({behavior:'smooth',block:'start'})">配对矩阵</a>`;
+
+  // Paradigms
+  const paradigmId='sec-'+secIndex;
+  secIndex++;
+  const paradigmsHtml2=`
+  <div class="section" id="${paradigmId}" data-color="pink">
+    <div class="section-header">
+      <div class="section-icon">🧩</div>
+      <div><span class="section-title">编辑范式</span><span class="section-subtitle">Editing Paradigms</span></div>
+      <span class="section-tag">行业惯例配方</span>
+    </div>
+    <div style="font-size:12.5px;color:#666;margin:-4px 0 18px 2px;line-height:1.7">矩阵展示技法<b style="color:#888">可以</b>怎么搭配，以下是已被行业验证并拥有专属名字的<b style="color:#888">经典配方</b>。<br>注：景别（远/全/中/近/特写）与构图（过肩/POV/荷兰角…）是画面的<span style="color:#888">状态参数</span>，运镜是改变它们的动作 —— 在以下范式中作为组成要素出现。</div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-name">Shot / Reverse Shot</div><div class="card-name-en">正反打</div>
+        <div class="card-desc">对话场景的基本编辑范式。两个角色的镜头交替切换，通常配合过肩拍（OTS）或单人中近景，用视线方向维持空间连贯性。</div>
+        <div class="card-example"><strong>案例：</strong>A说话（过肩B）→ B回应（过肩A）→ 交替往复，几乎所有影视对话场景的默认拍法</div>
+        <div class="card-extra card-cognition">过肩拍提供「在场第三人」的视角代入；180度线规则确保观众不会产生左右方向混乱</div>
+        <div class="card-extra card-recipe">硬切 + 视线剪辑 + 过肩构图 / 单人景别</div>
+        <div class="card-tags"><span class="tag tag-pink">范式</span><span class="tag tag-gray">对话场景</span><span class="tag tag-gray">★ 入门</span></div>
+      </div>
+      <div class="card">
+        <div class="card-name">Master Shot Coverage</div><div class="card-name-en">主镜头覆盖法</div>
+        <div class="card-desc">先用全景拍完整段表演作为保底（Master Shot），再分别拍每个角色的中景和近景（Coverage），后期从多条素材中自由选取最佳组合。好莱坞工业流水线的基石。</div>
+        <div class="card-example"><strong>案例：</strong>好莱坞标准三机位 — 一条全景 Master + 两条单人 Coverage，后期任意切换</div>
+        <div class="card-extra card-recipe">景别阶梯（全→中→近）+ 硬切 + 正反打</div>
+        <div class="card-tags"><span class="tag tag-pink">范式</span><span class="tag tag-gray">制片流程</span><span class="tag tag-gray">★ 入门</span></div>
+      </div>
+      <div class="card">
+        <div class="card-name">Kuleshov Effect</div><div class="card-name-en">库里肖夫效应</div>
+        <div class="card-desc">同一个无表情面孔与不同画面并置，观众自行脑补出不同情绪。所有「反应镜头」剪辑的理论基础 —— 不是演员演出了情绪，是剪辑创造了情绪。</div>
+        <div class="card-example"><strong>案例：</strong>无表情脸 + 汤 = 饥饿；+ 棺材 = 悲伤；+ 女人 = 欲望 — 1920年代经典实验</div>
+        <div class="card-extra card-cognition">大脑的叙事本能强制在相邻画面间建立因果关系。即使两个画面毫无关联，大脑也会「编故事」把它们连起来</div>
+        <div class="card-extra card-recipe">硬切 + 对比 / 相似蒙太奇</div>
+        <div class="card-tags"><span class="tag tag-pink">范式</span><span class="tag tag-gray">反应镜头</span><span class="tag tag-gray">★★★ 高级</span></div>
+      </div>
+      <div class="card">
+        <div class="card-name">Montage Sequence</div><div class="card-name-en">蒙太奇段落</div>
+        <div class="card-desc">配乐驱动的画面序列，将大段时间压缩为数十秒。不追求逐帧叙事连贯，追求情绪和节奏的堆叠感。</div>
+        <div class="card-example"><strong>案例：</strong>《洛奇》训练蒙太奇、《飞屋环游记》开头婚姻蒙太奇 — 配乐串起一组画面压缩数年时光</div>
+        <div class="card-extra card-recipe">跳切 / 叠化 + 情绪蒙太奇 + 音乐桥接</div>
+        <div class="card-tags"><span class="tag tag-pink">范式</span><span class="tag tag-gray">时间压缩</span><span class="tag tag-gray">★★ 中级</span></div>
+      </div>
+      <div class="card">
+        <div class="card-name">Establishing Sequence</div><div class="card-name-en">建场三部曲</div>
+        <div class="card-desc">远景定位空间 → 中景引入人物 → 近景开始叙事。经典的「从外到内」开场节奏，让观众先知道在哪，再关注是谁，最后进入故事。</div>
+        <div class="card-example"><strong>案例：</strong>城市航拍远景 → 某栋大楼中景 → 办公室内角色对话近景</div>
+        <div class="card-extra card-cognition">符合人类进入新环境时的自然认知顺序：先环顾四周建立空间感，再聚焦到具体的人和事</div>
+        <div class="card-extra card-recipe">景别递进（远→中→近）+ 先后蒙太奇 + 硬切</div>
+        <div class="card-tags"><span class="tag tag-pink">范式</span><span class="tag tag-gray">开场建立</span><span class="tag tag-gray">★ 入门</span></div>
+      </div>
+      <div class="card">
+        <div class="card-name">Chase Cutting</div><div class="card-name-en">追逐剪辑</div>
+        <div class="card-desc">追逐者与被追者的镜头交叉切换，随着距离缩短，切换频率递增，制造越来越强的紧迫感，直到双方汇合或分离。</div>
+        <div class="card-example"><strong>案例：</strong>《谍影重重》追车段落 — 伯恩与追击者之间快速切换，节奏越来越紧</div>
+        <div class="card-extra card-cognition">切换频率的加速直接映射心率加速。大脑将信息切换速度等同于事件紧迫程度</div>
+        <div class="card-extra card-recipe">交叉蒙太奇 + 硬切频率递增 + 手持 / FPV</div>
+        <div class="card-tags"><span class="tag tag-pink">范式</span><span class="tag tag-gray">追逐场景</span><span class="tag tag-gray">★★ 中级</span></div>
+      </div>
+    </div>
+  </div>`;
+  app.insertAdjacentHTML('beforeend',paradigmsHtml2);
+
+  sidebarHtml+=`<a class="sb-link" data-target="${paradigmId}" onclick="document.getElementById('${paradigmId}').scrollIntoView({behavior:'smooth',block:'start'})">编辑范式</a>`;
+
+  // Summary
+  function countCards(sections){return sections.reduce((a,s)=>{let n=0;if(s.cards)n+=s.cards.length;if(s.parent)n+=1;if(s.groups)s.groups.forEach(g=>n+=g.cards.length);return a+n},0)}
+  const p1=countCards(PARTS[0].sections);
+  const p2=countCards(PARTS[1].sections);
+  const p3=countCards(PARTS[2].sections);
+  const p4=6;
+  app.insertAdjacentHTML('beforeend',`
+  <div class="summary"><div class="summary-grid">
+    <div class="summary-card"><div class="summary-number" style="color:#4ade80">${p1}</div><div class="summary-label">单镜头技法</div></div>
+    <div class="summary-card"><div class="summary-number" style="color:#fbbf24">${p2}</div><div class="summary-label">多镜头技法</div></div>
+    <div class="summary-card"><div class="summary-number" style="color:#c084fc">${p3}</div><div class="summary-label">交叉地带</div></div>
+    <div class="summary-card"><div class="summary-number" style="color:#f472b6">${p4}</div><div class="summary-label">编辑范式</div></div>
+    <div class="summary-card"><div class="summary-number" style="color:#1a1a2e">${totalCards+p4}</div><div class="summary-label">技法总计</div></div>
+  </div></div>`);
+
+  app.insertAdjacentHTML('beforeend','<div class="footer">镜头语言全图鉴 — Cinematic Language Complete Reference</div>');
+
+  // Build sidebar
+  sidebar.innerHTML=sidebarHtml;
+
+  // IntersectionObserver for sidebar highlight
+  const secObserver=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+        const link=document.querySelector(`.sb-link[data-target="${e.target.id}"]`);
+        if(link){
+          link.classList.add('active');
+          link.scrollIntoView({block:'nearest',behavior:'smooth'});
+        }
+      }
+    });
+  },{threshold:0.1,rootMargin:'-10% 0px -80% 0px'});
+
+  document.querySelectorAll('.section, .matrix-wrap, .group-header').forEach(el=>{
+    if(el.id) secObserver.observe(el);
+  });
+}
+
+async function handleFiles(cid,files){for(const f of files){if(!f.type.startsWith('video/')){showToast('请上传视频文件');continue}await dbAdd(cid,f)}showToast(`已添加 ${files.length} 个视频`);loadGallery(cid)}
+async function loadGallery(cid){const g=document.getElementById(`gallery-${cid}`);if(!g)return;const vs=await dbGetByCard(cid);g.innerHTML='';vs.forEach((v,i)=>{const url=URL.createObjectURL(v.blob);const t=document.createElement('div');t.className='video-thumb';t.innerHTML=`<video src="${url}" preload="metadata" muted></video><div class="play-icon"></div><button class="delete-btn">&times;</button><div class="vid-label">${v.name}</div>`;const vid=t.querySelector('video');vid.addEventListener('loadedmetadata',()=>{vid.currentTime=Math.min(1,vid.duration*.1)});t.addEventListener('click',e=>{if(e.target.classList.contains('delete-btn'))return;openModal(cid,i)});t.querySelector('.delete-btn').addEventListener('click',async e=>{e.stopPropagation();await dbDelete(v.id);URL.revokeObjectURL(url);showToast('已删除');loadGallery(cid)});g.appendChild(t)})}
+
+// Modal
+let ms={cardId:null,index:0,videos:[]};
+async function openModal(cid,i){const vs=await dbGetByCard(cid);if(!vs.length)return;ms={cardId:cid,index:i,videos:vs};showMV();document.getElementById('videoModal').classList.add('active')}
+function showMV(){const{index:i,videos:vs,cardId:cid}=ms;const v=vs[i];const vid=document.getElementById('modalVideo');let name=cid;PARTS.forEach(p=>p.sections.forEach(s=>{if(s.cards)s.cards.forEach(c=>{if(c.id===cid)name=c.name});if(s.parent&&s.parent.id===cid)name=s.parent.name;if(s.groups)s.groups.forEach(g=>g.cards.forEach(c=>{if(c.id===cid)name=c.name}))}));if(vid._u)URL.revokeObjectURL(vid._u);const u=URL.createObjectURL(v.blob);vid._u=u;vid.src=u;vid.load();document.getElementById('modalPlayOverlay').classList.remove('hidden');document.getElementById('modalTitle').textContent=`${name} — ${v.name}`;document.getElementById('modalInfo').textContent=`${i+1}/${vs.length} · ${fmtSize(v.size)}`;document.getElementById('modalPrev').disabled=i===0;document.getElementById('modalNext').disabled=i===vs.length-1}
+function closeModal(){const v=document.getElementById('modalVideo');v.pause();if(v._u){URL.revokeObjectURL(v._u);v._u=null}v.removeAttribute('src');v.load();document.getElementById('videoModal').classList.remove('active')}
+
+document.getElementById('modalClose').addEventListener('click',closeModal);
+document.getElementById('videoModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+document.getElementById('modalPlayOverlay').addEventListener('click',()=>{const v=document.getElementById('modalVideo');v.muted=false;v.volume=1;v.currentTime=0;const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play();showToast('请点击喇叭图标取消静音')});document.getElementById('modalPlayOverlay').classList.add('hidden')});
+document.getElementById('modalVideo').addEventListener('ended',()=>document.getElementById('modalPlayOverlay').classList.remove('hidden'));
+document.getElementById('modalVideo').addEventListener('play',()=>document.getElementById('modalPlayOverlay').classList.add('hidden'));
+document.getElementById('modalPrev').addEventListener('click',()=>{if(ms.index>0){ms.index--;showMV()}});
+document.getElementById('modalNext').addEventListener('click',()=>{if(ms.index<ms.videos.length-1){ms.index++;showMV()}});
+document.addEventListener('keydown',e=>{if(!document.getElementById('videoModal').classList.contains('active'))return;if(e.key==='Escape')closeModal();if(e.key==='ArrowLeft'&&ms.index>0){ms.index--;showMV()}if(e.key==='ArrowRight'&&ms.index<ms.videos.length-1){ms.index++;showMV()}});
+
+(async()=>{await openDB();render();PARTS.forEach(p=>p.sections.forEach(s=>{if(s.groups){if(s.parent)loadGallery(s.parent.id);s.groups.forEach(g=>g.cards.forEach(c=>loadGallery(c.id)))}else if(s.cards){s.cards.forEach(c=>loadGallery(c.id))}}))})();
+</script>
+</body>
+</html>
