@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -200,11 +201,33 @@
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   .footer{text-align:center;padding:30px 20px;border-top:1px solid #e8e8ee;color:#ccc;font-size:11px}
 
+  /* Mobile nav */
+  .mobile-bar{display:none;position:sticky;top:0;z-index:200;background:rgba(245,245,248,.95);backdrop-filter:blur(10px);border-bottom:1px solid #e8e8ee;padding:10px 16px;align-items:center;justify-content:space-between}
+  .mobile-bar-title{font-size:14px;font-weight:700;color:#1a1a2e}
+  .mobile-bar-btn{padding:6px 14px;background:#fff;border:1px solid #ddd;border-radius:6px;font-size:12px;color:#666;cursor:pointer}
+  .mobile-bar-btn:active{background:#f0f0f0}
+  .mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;background:rgba(0,0,0,.4)}
+  .mobile-menu.open{display:block}
+  .mobile-menu-panel{position:absolute;top:0;right:0;width:280px;height:100%;background:#fafafa;overflow-y:auto;padding:16px 0;box-shadow:-4px 0 20px rgba(0,0,0,.1)}
+  .mobile-menu-close{display:flex;justify-content:flex-end;padding:0 16px 12px}
+  .mobile-menu-close button{width:32px;height:32px;border:none;background:rgba(0,0,0,.05);border-radius:6px;font-size:18px;color:#999;cursor:pointer}
+  .mobile-menu .sb-part{padding:14px 16px 4px;font-size:11px;font-weight:700;letter-spacing:1px;color:#aaa}
+  .mobile-menu .sb-link{display:block;padding:8px 16px 8px 28px;color:#666;font-size:13px;text-decoration:none;cursor:pointer;border-left:2px solid transparent}
+  .mobile-menu .sb-link.active{color:#7c3aed;border-left-color:#7c3aed;background:rgba(124,58,237,.04)}
+  .mobile-menu .sb-sub{padding-left:40px;font-size:12px;color:#999}
+
   @media(max-width:900px){
     .sidebar{display:none}
     .layout{display:block}
+    .mobile-bar{display:flex}
+    .header{padding:32px 16px 8px}
+    .header h1{font-size:28px}
+    .part{padding:28px 16px 16px}
+    .section{padding:0 12px 20px}
+    .cards{grid-template-columns:1fr}
+    .parent-card{grid-template-columns:1fr;padding:18px}
+    .matrix{font-size:10px}
   }
-  @media(max-width:640px){.header h1{font-size:26px}.cards{grid-template-columns:1fr}.matrix{font-size:10px}}
 </style>
 <script dataid="70"  data-x="aliincet"  src="https://g.alicdn.com/AWSC/et/1.83.8/et_f.js"></script><script dataid="80"  data-x="aliincet"  src="https://g.alicdn.com/network-security/dlh/2.1.1/index.js"></script></head>
 <body>
@@ -214,6 +237,15 @@
   <div class="subtitle">CINEMATIC LANGUAGE &mdash; COMPLETE REFERENCE</div>
 </div>
 
+<div class="mobile-bar">
+  <span class="mobile-bar-title">镜头语言全图鉴</span>
+  <button class="mobile-bar-btn" onclick="document.getElementById('mobileMenu').classList.add('open')">☰ 目录</button>
+</div>
+<div class="mobile-menu" id="mobileMenu" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="mobile-menu-panel" id="mobileMenuPanel">
+    <div class="mobile-menu-close"><button onclick="document.getElementById('mobileMenu').classList.remove('open')">&times;</button></div>
+  </div>
+</div>
 <div class="layout">
   <aside class="sidebar" id="sidebar"></aside>
   <div class="content" id="app"></div>
@@ -558,8 +590,14 @@ function render(){
 
   app.insertAdjacentHTML('beforeend','<div class="footer">镜头语言全图鉴 — Cinematic Language Complete Reference</div>');
 
-  // Build sidebar
+  // Build sidebar + mobile menu
   sidebar.innerHTML=sidebarHtml;
+  const mobilePanel=document.getElementById('mobileMenuPanel');
+  const closeBtn=mobilePanel.querySelector('.mobile-menu-close').outerHTML;
+  const mobileLinks=sidebarHtml.replace(/onclick="[^"]*"/g,(m)=>{
+    return m.replace('")',';document.getElementById(\'mobileMenu\').classList.remove(\'open\')")');
+  });
+  mobilePanel.innerHTML=closeBtn+mobileLinks;
 
   // IntersectionObserver for sidebar highlight
   const secObserver=new IntersectionObserver(entries=>{
